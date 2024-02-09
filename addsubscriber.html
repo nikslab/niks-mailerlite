@@ -67,7 +67,9 @@
                         },
                         body: JSON.stringify({
                             name: this.name,
-                            email: lowercaseEmail
+                            lastName: this.lastName,
+                            email: lowercaseEmail,
+                            status: this.status,
                         })
                     })
                     .then(response => response.json())

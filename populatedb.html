@@ -45,6 +45,7 @@
                             },
                             body: JSON.stringify({
                                 email: email.toLowerCase(),
+                                status: 'subscribed',
                             }),
                         })
                             .then(response => response.json())

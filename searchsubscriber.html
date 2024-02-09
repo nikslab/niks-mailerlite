@@ -13,13 +13,23 @@
 
     <div id="app">
         <h2>Subscriber Search</h2>
-        <form @submit.prevent="searchSubscribers">
+        <form ref="searchForm" @submit.prevent="searchSubscribers">
             <label for="name">Name:</label>
             <input type="text" id="name" v-model="searchData.name">
+            <p>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" v-model="searchData.lastName">
             <p>
             <label for="email">Email:</label>
             <input type="text" id="email" v-model="searchData.email">
             <p>
+            <label for="status">Status:</label>
+            <select id="status" v-model="searchData.status">
+                <option value="" selected>Any</option>
+                <option value="subscribed">Subscribed</option>
+                <option value="unsubscribed">Unsubscribed</option>
+            </select>
+            <p> 
             <label for="limit">Items per page:</label>
             <select id="limit" v-model="searchData.limit">
                 <option value="5">5</option>
@@ -28,13 +38,14 @@
             </select>
             <p>
             <button type="submit">Search</button>
+            <button type="button" @click="clearFields">Clear</button>
         </form>
 
         <div v-if="subscribers.length > 0">
             <h3>Results</h3>
             <ul>
                 <li v-for="subscriber in subscribers" :key="subscriber.id">
-                    {{ subscriber.name }} - {{ subscriber.email }}
+                    {{ subscriber.name }} {{ subscriber.lastName }} - {{ subscriber.email }} {{ subscriber.status }}
                 </li>
             </ul>
             <div>
@@ -57,7 +68,9 @@
             data: {
                 searchData: {
                     name: '',
+                    lastName: '',
                     email: '',
+                    status: '',
                     limit: 5,
                 },
                 subscribers: [],
@@ -70,7 +83,7 @@
                     this.currentPage = 1;
 
                     // Make a GET request to the API endpoint
-                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&email=${this.searchData.email}&limit=${this.searchData.limit}&page=${this.currentPage}`)
+                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&lastName=${this.searchData.lastName}&email=${this.searchData.email}&status=${this.searchData.status}&limit=${this.searchData.limit}&page=${this.currentPage}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'success') {
@@ -79,6 +92,7 @@
                                     this.message = '';
                                 } else {
                                     // Keep the existing subscribers if no new data is received
+                                    this.subscribers = [];
                                     this.message = 'No results found';
                                 }
                             } else {
@@ -107,7 +121,7 @@
                 },
                 fetchPage() {
                     // Make a GET request to the API endpoint for the current page
-                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&email=${this.searchData.email}&limit=${this.searchData.limit}&page=${this.currentPage}`)
+                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&lastName=${this.searchData.lastName}&email=${this.searchData.email}&status=${this.searchData.status}&limit=${this.searchData.limit}&page=${this.currentPage}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'success') {
@@ -128,6 +142,15 @@
                             this.subscribers = [];
                             this.message = 'Failed to connect to the API';
                         });
+                },
+                clearFields() {
+                    // Reset the form using the reset method
+                    this.$refs.searchForm.reset();
+                    // Clear the variables
+                    this.searchData.name = '';
+                    this.searchData.lastName = '';
+                    this.searchData.email = '';
+                    this.searchData.status = '';
                 },
             },
         });
