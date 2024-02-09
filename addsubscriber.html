@@ -12,7 +12,9 @@
 <body>
 
     <div id="app">
-        <h2>Add Subscriber Form</h2>
+        <a href="searchsubscribers.html">Search Subscriber</a>
+        <p>
+        <h2>Add Subscriber</h2>
         <form @submit.prevent="insertSubscriber">
             <label for="name">Name:</label>
             <input type="text" id="name" v-model="name">
