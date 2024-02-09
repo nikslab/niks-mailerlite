@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriber Search</title>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <h2>Subscriber Search</h2>
+        <form @submit.prevent="searchSubscribers">
+            <label for="name">Name:</label>
+            <input type="text" id="name" v-model="searchData.name">
+            <p>
+            <label for="email">Email:</label>
+            <input type="text" id="email" v-model="searchData.email">
+            <p>
+            <label for="limit">Items per page:</label>
+            <select id="limit" v-model="searchData.limit">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+            </select>
+            <p>
+            <button type="submit">Search</button>
+        </form>
+
+        <div v-if="subscribers.length > 0">
+            <h3>Results</h3>
+            <ul>
+                <li v-for="subscriber in subscribers" :key="subscriber.id">
+                    {{ subscriber.name }} - {{ subscriber.email }}
+                </li>
+            </ul>
+            <div>
+                <button @click="previousPage" :disabled="currentPage === 1">Previous Page</button>
+                <span>Page {{ currentPage }}</span>
+                <button @click="nextPage" :disabled="this.subscribers.length < this.searchData.limit || this.message === 'No more results'">Next Page</button>
+            </div>
+        </div>
+
+        <div v-else>
+            <p></p>
+        </div>
+
+        <div v-if="message">{{ message }}</div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                searchData: {
+                    name: '',
+                    email: '',
+                    limit: 5,
+                },
+                subscribers: [],
+                currentPage: 1,
+                message: '',
+            },
+            methods: {
+                searchSubscribers() {
+                    // Reset currentPage and fetch new results
+                    this.currentPage = 1;
+
+                    // Make a GET request to the API endpoint
+                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&email=${this.searchData.email}&limit=${this.searchData.limit}&page=${this.currentPage}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                if (data.data.length > 0) {
+                                    this.subscribers = data.data;
+                                    this.message = '';
+                                } else {
+                                    // Keep the existing subscribers if no new data is received
+                                    this.message = 'No results found';
+                                }
+                            } else {
+                                this.subscribers = [];
+                                this.message = 'Error connecting to the API';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            this.subscribers = [];
+                            this.message = 'Error connecting to the API';
+                        });
+                },
+                nextPage() {
+                    // Only increment the current page if there are results to show
+                    if (this.subscribers.length >= this.searchData.limit) {
+                        this.currentPage++;
+                        this.fetchPage();
+                    }
+                },
+                previousPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        this.fetchPage();
+                    }
+                },
+                fetchPage() {
+                    // Make a GET request to the API endpoint for the current page
+                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&email=${this.searchData.email}&limit=${this.searchData.limit}&page=${this.currentPage}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                if (data.data.length > 0) {
+                                    this.subscribers = data.data;
+                                    this.message = '';
+                                } else {
+                                    // Keep the existing subscribers if no new data is received
+                                    this.message = 'No more results';
+                                }
+                            } else {
+                                this.subscribers = [];
+                                this.message = 'Error connecting to the API';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            this.subscribers = [];
+                            this.message = 'Failed to connect to the API';
+                        });
+                },
+            },
+        });
+    </script>
+
+</body>
+
+</html>

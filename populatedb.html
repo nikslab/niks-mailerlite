@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Populate Database</title>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <h2>Populate Database</h2>
+        <textarea rows="15" cols="50" v-model="emailList" placeholder="Enter email addresses (one per line)"></textarea>
+        <button @click="populateDatabase">Submit</button>
+        <div v-for="(result, index) in results" :key="index">
+            {{ result }}
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                emailList: '',
+                results: [],
+            },
+            methods: {
+                async populateDatabase() {
+                    // Split email addresses by newline
+                    const emails = this.emailList.split('\n').map(email => email.trim());
+
+                    // Clear previous results
+                    this.results = [];
+
+                    // Add each email address to the database
+                    emails.forEach(email => {
+                        // Make a POST request to the API endpoint
+                        fetch('http://localhost/api/newsub.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: email.toLowerCase(),
+                            }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    this.results.push(`Success: ${email} - ${data.message}`);
+                                } else if (data.status === 'subscriber_exists') {
+                                    this.results.push(`Already Exists: ${email} - ${data.message}`);
+                                } else {
+                                    this.results.push(`Error: ${email} - ${data.message}`);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                this.results.push(`Failed to connect to the API for: ${email}`);
+                            });
+                    });
+                },
+                async loadEmailAddressesFromFile() {
+                    try {
+                        const response = await fetch('random_emails.txt');
+                        this.emailList = await response.text();
+                    } catch (error) {
+                        console.error('Error reading the file:', error);
+                        this.results.push('Error reading the file');
+                    }
+                },
+            },
+            mounted() {
+                // Automatically trigger loading email addresses from the file when the component is mounted
+                this.loadEmailAddressesFromFile();
+            },
+        });
+    </script>
+
+</body>
+
+</html>

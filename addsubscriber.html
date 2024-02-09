@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nik's Mailerlite</title>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <h2>Add Subscriber Form</h2>
+        <form @submit.prevent="insertSubscriber">
+            <label for="name">Name:</label>
+            <input type="text" id="name" v-model="name">
+            <p>
+        
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" v-model="lastName">
+            <p>
+        
+            <label for="email">Email*:</label>
+            <input type="email" id="email" v-model="email" required>
+            <p>
+        
+            <label for="status">Status*:</label>
+            <select id="status" v-model="status" required>
+                <option value="subscribed" selected>Subscribed</option>
+                <option value="unsubscribed">Unsubscribed</option>
+            </select>
+            <p>     
+        
+            <button type="submit">Add Subscriber</button>
+        </form>        
+        <p v-if="message">{{ message }}</p>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                lastName: '',
+                email: '',
+                status: '',
+                message: ''
+            },
+            methods: {
+                insertSubscriber() {
+                    // Validate email format
+                    if (!this.validateEmail(this.email)) {
+                        this.message = 'Please enter a valid email address.';
+                        return;
+                    }
+
+                    // Convert email to lowercase
+                    const lowercaseEmail = this.email.toLowerCase();
+
+                    // Make a POST request to the API endpoint
+                    fetch("http://localhost/api/newsub.php", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: this.name,
+                            email: lowercaseEmail
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            this.message = 'Subscriber inserted successfully';
+                        } else if (data.status === 'subscriber_exists') {
+                            this.message = 'Subscriber with this email already exists';
+                        } else {
+                            this.message = 'Error inserting subscriber';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.message = 'Failed to connect to the API';
+                    });
+                },
+
+                validateEmail(email) {
+                    // Simple email validation using regular expression
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
