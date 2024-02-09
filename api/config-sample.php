@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * PDO connection to database and some functions
+ * 
+ * PHP Version 8.0
+ * 
+ * @author Nik Stankovic <niks.work.goog@gmail.com>
+ * @link   https://github.com/nikslab/niks-mailerlite
+ */
+
 // Database
 $dbHost = 'localhost';
 $dbName = '**************';
@@ -14,13 +23,16 @@ try {
     die("Error: " . $e->getMessage());
 }
 
-$apiBase = "https://localhost/api";
-
-/*************/
-/* FUNCTIONS */
-/*************/
-
 // Function to sanitize input and prevent SQL injection
+/**
+ * PDO connection to database and some functions
+ * 
+ * PHP Version 8.0
+ * 
+ * @param $input string that needs to be sanitized
+ * 
+ * @return string sanitized $input
+ */
 function sanitizeInput($input)
 {
     return htmlspecialchars(strip_tags(trim($input)));

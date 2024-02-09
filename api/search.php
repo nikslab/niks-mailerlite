@@ -1,6 +1,15 @@
 <?php
 
-require_once("config.php");
+/**
+ * API endpoint searches for a subscriber
+ * 
+ * PHP Version 8.0
+ * 
+ * @author Nik Stankovic <niks.work.goog@gmail.com>
+ * @link   https://github.com/nikslab/niks-mailerlite
+ */
+
+require_once "config.php";
 
 // Read input data from GET request
 $name = isset($_GET['name']) ? sanitizeInput($_GET['name']) : null;
@@ -81,5 +90,9 @@ try {
 
 } catch (PDOException $e) {
     // Return error message in case of a database error
-    echo json_encode(['status' => 'error', 'message' => "Error querying the database"]);
+    echo json_encode(
+        ['status' => 
+         'error', 
+         'message' => "Error querying the database"]
+    );
 }
