@@ -48,7 +48,15 @@ Two options from here.
 ## Answers to questions in the task
 
 
-0. Link to fairly recent code:
+0. **Link to fairly recent code** https://gist.github.com/nikslab/ef787bab825342c6459d7c051a55ffbb
+
+This is a WordPress plugin (not all files are included) that syncs inventory in WooCommerce for FragranceNet drop shipping clients.
+
+  The first file fragrance-net-woo-syncer.php is the main plugin file. Much of it functions that have to exist to define the plugin to Wordpress. It is essentially the manifest and the setup page. Some of it was auto-generated or is templated.
+
+  The second file functions.php are some of the helpers function I wrote (and often use in other projects) for logging and database interactions, so code there is 100% mine.
+
+  The plugin is used by a client of a client.
 
 
 1. **How to scale the WRITE endpoint?**

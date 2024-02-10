@@ -47,7 +47,7 @@
             <h3>Results</h3>
             <ul>
                 <li v-for="subscriber in subscribers" :key="subscriber.id">
-                    {{ subscriber.name }} {{ subscriber.lastName }} - {{ subscriber.email }} {{ subscriber.status }}
+                    {{ subscriber.name }} {{ subscriber.lastName }} - <b>{{ subscriber.email }}</b> <i>{{ subscriber.status }}</i>
                 </li>
             </ul>
             <div>
