@@ -1,5 +1,6 @@
 # niks-mailerlite
 
+Author: Nik Stankovic <niks.work.goog@gmail.com>
 
 You can also test this on https://niks-lab.com/mailerlite/
 
