@@ -50,26 +50,20 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 0. Link to fairly recent code:
 
 
-1. 'How to scale the WRITE endpoint?'
+1. ''How to scale the WRITE endpoint?''
+
 There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see Design notes), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful. I'd have to know the ratio of repeat requests to judge if it would improve things.
 
-
-
-
  Scaling a READ endpoint is a different question. Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server. I have actually done this on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.
-
-
-
 
  More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
 
 
-2. 'How to scale it all 10 times?'
+2. ''How to scale it all 10 times?''
+
 There are different architectures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial.
 
-
  The reason for this is that it allows for growth and scaling both up and down.
-
 
  "But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way that solves all kinds of growth problems.
  Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are trivial endpoints and can be easily converted. AWS API Gateway provides many other features for APIs including security, throttling, authentications, etc
