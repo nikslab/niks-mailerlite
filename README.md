@@ -18,9 +18,9 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 
 3. Create database `niks-mailerlite` on local MySQL 
 4. Create a user/password with access to `niks-mailerlite`
-5. Import database structure in from `db/database.sql`
-5. Edit `.env` as needed. Root password can be ignored in this case
-6. Point your web server (Apache or nginx) to src directory
+5. Import database structure in from `db/database.sql` with something like `mysql -uuser -p < db/database.sql` (adjust as needed)
+6. Edit `.env` as needed. Root password can be ignored in this case
+7. Point your web server (Apache or nginx) to src directory
 
 
 ## Usage
