@@ -18,7 +18,7 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 
 3. Create database `niks-mailerlite` on local MySQL 
 4. Create a user/password with access to `niks-mailerlite`
-5. Upload database 
+5. Import database structure in from `db/database.sql`
 5. Edit `.env` as needed. Root password can be ignored in this case
 6. Point your web server (Apache or nginx) to src directory
 
@@ -38,7 +38,7 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 1. 'How to scale a WRITE endpoint?'
 Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server I have actually done this ones on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.
 
-More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
+  More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
 
 2. 'How to scale it all 10 times?'
 There are different architectures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial. 
