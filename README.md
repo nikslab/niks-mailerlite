@@ -14,14 +14,14 @@ You can also test this on https://niks-lab.com/mailerlite/
 Two options from here.
 
 
-A: If using **Docker**
+**A: If using *Docker***
 
 
 3. Just spin it up with `docker-compose up -d --build`
 4. Open http://localhost in browser
 
 
-B: If using own local environment (requires MySQL server, PHP, and nginx or Apache)
+**B: If using own local environment (requires MySQL server, PHP, and nginx or Apache)**
 
 
 3. Create database `niks_mailerlite` on local MySQL
@@ -52,7 +52,7 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 
 1. **How to scale the WRITE endpoint?**
 
-There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see Design notes), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful. I'd have to know the ratio of repeat requests to judge if it would improve things.
+There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see *Notes on design*), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful. I'd have to know the ratio of repeat requests to judge if it would improve things.
 
  Scaling a READ endpoint is a different question. Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server. I have actually done this on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.
 
