@@ -43,7 +43,7 @@ if (($email !== null) && ($email !== "")) {
 
 if (($status !== null) && ($status !== "")) {
     $query .= " AND status = :status";
-    $params[':status'] = "%$status%";
+    $params[':status'] = "$status";
 }
 
 $query .= " LIMIT :limit OFFSET :offset";
