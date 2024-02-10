@@ -14,7 +14,7 @@ You can also test this on https://niks-lab.com/mailerlite/
 Two options from here.
 
 
-A: If using 'Docker'
+A: If using **Docker**
 
 
 3. Just spin it up with `docker-compose up -d --build`
@@ -50,7 +50,7 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 0. Link to fairly recent code:
 
 
-1. ''How to scale the WRITE endpoint?''
+1. **How to scale the WRITE endpoint?**
 
 There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see Design notes), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful. I'd have to know the ratio of repeat requests to judge if it would improve things.
 
@@ -59,7 +59,7 @@ There is not much we can do to scale a WRITE endpoint because new subscribers ha
  More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
 
 
-2. ''How to scale it all 10 times?''
+2. **How to scale it all 10 times?**
 
 There are different architectures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial.
 
