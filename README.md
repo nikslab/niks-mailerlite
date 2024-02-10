@@ -36,14 +36,18 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 0. Link to fairly recent code:
 
 1. 'How to scale a WRITE endpoint?'
-Multiple servers, separete MySQL server, load baalncer on something like AWS. Also see next answer.
+Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server I have actually done this ones on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.
+
+More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
 
 2. 'How to scale it all 10 times?'
-There are different architures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial. 
+There are different architectures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial. 
 
- "But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way. Of course you can built a cluster of physical servers in a datacenter too. That will cost (a lot) more and take (a lot) longer, but may be an option if for example physical security is critical. 
+  The reason for this is that it allows for growth and scaling both up and down.
+
+  "But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way. Of course you can built a cluster of physical servers in a datacenter too. That will cost (a lot) more and take (a lot) longer, but may be an option if for example physical security is critical. 
  
- Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are tricial endpoints.
+  Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are tricial endpoints.
 
 
 ## Notes on design
