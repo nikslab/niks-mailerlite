@@ -18,7 +18,10 @@ $data = json_decode($inputData, true);
 // Check if the "email" field is present
 if (isset($data['email'])) {
     // Sanitize input
+    $name = sanitizeInput($data['name']);
+    $lastName = sanitizeInput($data['lastName']);
     $email = strtolower(sanitizeInput($data['email']));
+    $status = sanitizeInput($data['status']);
 
     // Insert data into the table with a unique constraint on the "email" column
     try {

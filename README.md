@@ -1,10 +1,56 @@
 # niks-mailerlite
 
-## Notes on design:
+You can also test this on https://niks-lab.com/mailerlite/
+
+## Setup
+
+1. Clone repository
+2. `cp .env-sample to .env`
+
+Two options from here. 
+
+A. If using ''Docker''
+3. Just spin it up with `docker-compose up -d --build`
+
+B: If using own local environment (requires MySQL server, PHP, and nginx or Apache).
+3. Create database `niks-mailerlite` on local MySQL 
+4. Create a user/password with access to niks-mailerlite
+5. Edit `.env` as needed. Root password can be ignore in this case.
+
+## Usage
+
+1. Open http://localhost/
+2. Click on Populate database
+3. 
+
+## Answers to questions in the task
+
+0. Link to fairly recent code:
+
+1. 'How to scale a WRITE endpoint?'
+Multiple servers, separete MySQL server, load baalncer on something like AWS. Also see next answer.
+
+2. 'How to scale it all 10 times?'
+There are different architures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial.
+
+"But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way. Of course you can built a cluster of physical servers in a datacenter too. That will cost (a lot) more and take (a lot) longer, but may be an option if for example physical security is critical.
+
+Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are tricial endpoints.
+
+
+## Notes on design
 
 1. All field validation is done on the front end. This is standard practice but also the API will be called a million times per minute. We don’t want the API checking whether the e-mail is properly formed a million times per minute. The only thing we do on the write is make sure the e-mail address is converted to all lowercase. Failing to do that (having records like “BOB@gmail.com” and “bob@gmail.com”) would really mess things up on search depending on how the collation of the database is done (or changed) or would be have to be done MySQL on every query. That's wasteful.
 
-2. Search API does not return total number of records. It would be trivial to add but would require an extra SQL query which we may want to avoid on an endpoint that gets a lot of calls. It would be better to create another endpoint then that returns the number of results.
+2. On insert, there is no check to see if the subscriber exists. We simply try to do it anyway. Table is indexed unique e-mail field so if the e-mail exists there will be a very specific MySQL error 1062 which will indicate that the subscriber already exists. This is somewhat risky if error codes change in the database, but is more efficient because it saves database queries.
 
-3. Chose Vue.js front end because it requires the least resources and for a simple demo it can be included with CDN--does not require Node.js and npm, etc. In a real application, different choices might be made.
+3. Your task description indicates that the GET subscriber endpoint will be called a lot, but you do not indicate what to optimize on. For example, I would assume that the search would always and only be on EXACT e-mail address seeking other information (name, status), but then you mention paging, which means multiple results. So we are going to have a bunch of "LIKE" in the SQL statements, so I gave up optimizing on speed. 
+
+4. Search API does not return total number of records. It would be trivial to add with a COUNT()but would require an extra SQL query which we may want to avoid on an endpoint that gets a lot of calls. It would be better to create another endpoint then that returns the number of results.
+
+In other words, I am optimizing as much as possible on speed, except where your task description indicates that may not be the main goal.
+
+5. I chose Vue.js front end because it requires the least resources and for a simple demo it can be included with CDN--does not require Node.js and npm, etc. In a real application, different choices might be made.
+
+6. Did not bother with https (using http) so as not to have to deal with https so as not have to deal with SSL certificates, that's not what this test is about. 
 
