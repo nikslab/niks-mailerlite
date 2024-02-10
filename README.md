@@ -4,24 +4,32 @@ You can also test this on https://niks-lab.com/mailerlite/
 
 ## Setup
 
-1. Clone repository
+1. Clone repository `git clone https://github.com/nikslab/niks-mailerlite.git`
 2. `cp .env-sample to .env`
 
 Two options from here. 
 
-A. If using ''Docker''
-3. Just spin it up with `docker-compose up -d --build`
+A: If using 'Docker'
 
-B: If using own local environment (requires MySQL server, PHP, and nginx or Apache).
+3. Just spin it up with `docker-compose up -d --build`
+4. Open http://localhost in browser
+
+B: If using own local environment (requires MySQL server, PHP, and nginx or Apache)
+
 3. Create database `niks-mailerlite` on local MySQL 
-4. Create a user/password with access to niks-mailerlite
-5. Edit `.env` as needed. Root password can be ignore in this case.
+4. Create a user/password with access to `niks-mailerlite`
+5. Upload database 
+5. Edit `.env` as needed. Root password can be ignored in this case
+6. Point your web server (Apache or nginx) to src directory
+
 
 ## Usage
 
 1. Open http://localhost/
-2. Click on Populate database
-3. 
+2. Click on "Populate database with random e-mails in bulk". This will allow you to quickly add a bunch of e-mail addresses to the database, you can use the random once provided and/or add yours. One e-mail address per line. it also serves as a test. Note: some e-mail addresses are pre-configured as duplicates on purpose. You can click on Submit many times it should fail with "Already exists" after the first time with the same input.
+3. Click on "Search Subscriber". You can just Search to browse with pagination.
+4. Otherwise test as needed. Adding one subscriber is done on "Add subscriber" page.
+
 
 ## Answers to questions in the task
 
@@ -31,11 +39,11 @@ B: If using own local environment (requires MySQL server, PHP, and nginx or Apac
 Multiple servers, separete MySQL server, load baalncer on something like AWS. Also see next answer.
 
 2. 'How to scale it all 10 times?'
-There are different architures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial.
+There are different architures for scaling different things. For these two endpoints specifically, if that is the question, I would rewrite them in Python and put them on AWS Lambda (serverless) and use the AWS API Gateway to manage things like authentication, etc. These endpoints are trivial. 
 
-"But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way. Of course you can built a cluster of physical servers in a datacenter too. That will cost (a lot) more and take (a lot) longer, but may be an option if for example physical security is critical.
-
-Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are tricial endpoints.
+ "But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way. Of course you can built a cluster of physical servers in a datacenter too. That will cost (a lot) more and take (a lot) longer, but may be an option if for example physical security is critical. 
+ 
+ Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are tricial endpoints.
 
 
 ## Notes on design
@@ -46,9 +54,7 @@ Besides, even with a preference for PHP, other parts of the application can be w
 
 3. Your task description indicates that the GET subscriber endpoint will be called a lot, but you do not indicate what to optimize on. For example, I would assume that the search would always and only be on EXACT e-mail address seeking other information (name, status), but then you mention paging, which means multiple results. So we are going to have a bunch of "LIKE" in the SQL statements, so I gave up optimizing on speed. 
 
-4. Search API does not return total number of records. It would be trivial to add with a COUNT()but would require an extra SQL query which we may want to avoid on an endpoint that gets a lot of calls. It would be better to create another endpoint then that returns the number of results.
-
-In other words, I am optimizing as much as possible on speed, except where your task description indicates that may not be the main goal.
+4. Search API does not return total number of records. It would be trivial to add with a COUNT()but would require an extra SQL query which we may want to avoid on an endpoint that gets a lot of calls. It would be better to create another endpoint then that returns the number of results In other words, I am optimizing as much as possible on speed, except where your task description indicates that may not be the main goal.
 
 5. I chose Vue.js front end because it requires the least resources and for a simple demo it can be included with CDN--does not require Node.js and npm, etc. In a real application, different choices might be made.
 
