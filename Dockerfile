@@ -18,4 +18,3 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Start PHP-FPM
 CMD ["php-fpm"]
-

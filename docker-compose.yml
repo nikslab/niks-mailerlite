@@ -8,6 +8,8 @@ services:
       - ./src:/var/www/html
     expose:
       - 9000
+    env_file:
+      - .env
 
   nginx:
     image: nginx:latest
@@ -22,14 +24,19 @@ services:
   mysql:
     image: mysql:5.6
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./db/database.sql:/docker-entrypoint-initdb.d/01-database.sql  # Database setup file
+    command: --init-file=/docker-entrypoint-initdb.d/01-database.sql  # Specify the init files
 
 volumes:
   mysql_data:
+
+
+
