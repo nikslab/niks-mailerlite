@@ -42,7 +42,7 @@ if (($email !== null) && ($email !== "")) {
 }
 
 if (($status !== null) && ($status !== "")) {
-    $query .= " AND status LIKE :status";
+    $query .= " AND status = :status";
     $params[':status'] = "%$status%";
 }
 
