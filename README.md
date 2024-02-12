@@ -9,7 +9,7 @@ You can also test this on https://niks-lab.com/mailerlite/
 
 
 1. Clone repository `git clone https://github.com/nikslab/niks-mailerlite.git`
-2. `cp .env-sample to .env`
+2. `cd niks-mailerlite/` and `cp .env-sample to .env`
 
 
 Two options from here.
