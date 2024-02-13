@@ -85,7 +85,7 @@
                     this.currentPage = 1;
 
                     // Make a GET request to the API endpoint
-                    fetch(`http://localhost/api/search.php?name=${this.searchData.name}&lastName=${this.searchData.lastName}&email=${this.searchData.email}&status=${this.searchData.status}&limit=${this.searchData.limit}&page=${this.currentPage}`)
+                    fetch(`api/search.php?name=${this.searchData.name}&lastName=${this.searchData.lastName}&email=${this.searchData.email}&status=${this.searchData.status}&limit=${this.searchData.limit}&page=${this.currentPage}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'success') {
