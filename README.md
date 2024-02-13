@@ -4,10 +4,10 @@ Author: Nik Stankovic <niks.work.goog@gmail.com>
 
 You can also test this on https://niks-lab.com/mailerlite/
 
- [Setup](#setup)
- [Usage](#usage)
- [Answers to questions in the task](#answers-to-questions-in-the-task)
- [Notes on design](#notes-on-design)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Answers to questions in the task](#answers-to-questions-in-the-task)
+- [Notes on design](#notes-on-design)
 
 
 ## Setup
