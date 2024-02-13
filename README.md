@@ -29,7 +29,7 @@ Two options from here.
 3. Create database `niks_mailerlite` on local MySQL
 4. Create a user/password with access to `niks_mailerlite` database
 5. Import database structure in from `db/database.sql` with something like `mysql -umyuser -p niks_mailerlite < db/database.sql` (adjust as needed)
-6. Edit `.env` as needed. Root password can be ignored in this case, it is there for Docker only. Make sure to change the `MYSQL_HOSTNAME` to **localhost** as the default for this is also optimized for Docker.
+6. Edit `.env` as needed for user/pass. Root password can be ignored in this case, it is there for Docker only. Make sure to change the `MYSQL_HOSTNAME` to **localhost** (or otherwise as appropriate) as the default for this is also optimized for Docker.
 7. Point your web server directory (Apache or nginx) to `src` directory
 
 
