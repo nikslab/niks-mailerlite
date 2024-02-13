@@ -9,7 +9,7 @@ You can also test this on https://niks-lab.com/mailerlite/
 
 
 1. Clone repository `git clone https://github.com/nikslab/niks-mailerlite.git`
-2. `cd niks-mailerlite/` and `cp .env-sample to .env`
+2. `cd niks-mailerlite/` and `cp .env-sample .env`
 
 
 Two options from here.
@@ -18,8 +18,9 @@ Two options from here.
 **A: If using *Docker***
 
 
-3. Just spin it up with `docker-compose up -d --build`
-4. Open http://localhost in browser
+3. Make sure nothing is running on your local machine on port 80 or 3306 (HTTP and MySQL)
+4. Spin up a container with `docker-compose up -d --build`
+5. Open http://localhost in browser
 
 
 **B: If using own local environment (requires MySQL server, PHP, and nginx or Apache)**
@@ -27,22 +28,18 @@ Two options from here.
 
 3. Create database `niks_mailerlite` on local MySQL
 4. Create a user/password with access to `niks_mailerlite` database
-5. Import database structure in from `db/database.sql` with something like `mysql -uuser -p niks_mailerlite < db/database.sql` (adjust as needed)
-6. Edit `.env` as needed. Root password can be ignored in this case.
+5. Import database structure in from `db/database.sql` with something like `mysql -umyuser -p niks_mailerlite < db/database.sql` (adjust as needed)
+6. Edit `.env` as needed. Root password can be ignored in this case, it is there for Docker only. Make sure to change the `MYSQL_HOSTNAME` to **localhost** as the default for this is also optimized for Docker.
 7. Point your web server directory (Apache or nginx) to `src` directory
-
-
 
 
 ## Usage
 
 
 1. Open http://localhost/
-2. Click on "Populate database with random e-mails in bulk". This will allow you to quickly add a bunch of e-mail addresses to the database, you can use the random once provided and/or add yours. One e-mail address per line. It also serves as a test. Note: some e-mail addresses are pre-configured as duplicates on purpose. You can click on Submit many times; it should fail with "Already exists" after the first time with the same input.
-3. Click on "Search Subscriber". You can just Search to browse with pagination.
-4. Otherwise test as needed. Adding one subscriber is done on the "Add subscriber" page.
-
-
+2. Click on *Populate database with random e-mails in bulk*. This will allow you to quickly add a bunch of e-mail addresses to the database, you can use the random once provided and/or add yours. One e-mail address per line. It also serves as a test. Note: some e-mail addresses are pre-configured as duplicates on purpose, it servers as a test. You can click on Submit many times; it should fail with "Already exists" after the first time with the same input.
+3. Click on *Search Subscriber* from the index page. You can just Search to browse with pagination.
+4. Otherwise test as needed. Adding one subscriber is done on the "Add subscriber" page. Navigation is at the top of the page.
 
 
 ## Answers to questions in the task
@@ -61,11 +58,11 @@ This is a WordPress plugin (not all files are included) that syncs inventory in 
 
 1. **How to scale the WRITE endpoint?**
 
-There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see *Notes on design*), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful. I'd have to know the ratio of repeat requests to judge if it would improve things.
+There is not much we can do to scale a WRITE endpoint because new subscribers have to be written to the database. It's just a scaling of the infrastructure, so more load balanced servers or something like AWS Lambda. I am not checking if the subscribers are in the database already (see *Notes on design*), so there is nothing else that can be done. Using something like Redis is possible if there really are a lot of repeat requests to WRITE. In that case a Redis/Memcache solution might be helpful simply to check if the user exists prior to the WRITE. I'd have to know the ratio of repeat requests to judge if it would improve things.
 
- Scaling a READ endpoint is a different question. Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server. I have actually done this on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.
+ Scaling a READ endpoint is a different question. Two ways to do this. For simple lookups by e-mail address TEXT FILES can be created with the JSON response. This is very effective because the load is entirely switched to the web server. I have actually done this on a project. There are limits to this mainly in the number of files that can be had on a system (inodes). So that would depend on how many records there are. I created a test file with this project, so you can see for example http://localhost/api/email/niks.work.goog@gmail.com it's just a JSON API response as text file.  
 
- More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here.
+ More realistically I would use Redis or Memcache. You ask for a configuration, but I am not sure what you mean here. The basic idea is that all incoming API requests would be stored in Redis for example, so for any new READ requests, Redis would be checked first before querying the database.
 
 
 2. **How to scale it all 10 times?**
@@ -74,7 +71,7 @@ There are different architectures for scaling different things. For these two en
 
  The reason for this is that it allows for growth and scaling both up and down.
 
- "But we prefer PHP". PHP will work on AWS Lambda with "bref", though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way that solves all kinds of growth problems.
+ "But we prefer PHP". PHP will work on AWS Lambda with *bref*, though I wouldn't go there. Your question is specifically on these two endpoints. If you want to serve 10 million requests per minute ("10 times 1 million per minute") then converting them to Python and using AWS is the BEST and most painless, quickest and cheapest way that solves all kinds of growth problems.
  Besides, even with a preference for PHP, other parts of the application can be written in PHP, while these two, and perhaps a few other endpoints, can be written in Python. These are trivial endpoints and can be easily converted. AWS API Gateway provides many other features for APIs including security, throttling, authentications, etc
 
 
@@ -98,7 +95,7 @@ There are different architectures for scaling different things. For these two en
 5. I chose Vue.js front end because it requires the least resources and for a simple demo it can be included with CDN--does not require Node.js and npm, etc. In a real application, different choices might be made.
 
 
-6. Did not bother with https (using http) so as not to have to deal with SSL certificates, that's not what this test is about.
+6. Did not bother with https (using http) so as not to have to deal with SSL certificates, that's not what this test is about. Have obviously done SSL certificates it would just be a distraction here.
 
 
 
