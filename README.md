@@ -47,13 +47,15 @@ Two options from here.
 3. Click on *Search Subscriber* from the index page. You can just Search to browse with pagination.
 4. Otherwise test as needed. Adding one subscriber is done on the "Add subscriber" page. Navigation is at the top of the page.
 
+
 ## Code structure
 
 Code structure follows a typical *Docker* structure with `db` folder for database setup file, `nginx` folder for nginx config file and all the source code in the `src`.
 
 "Public" html code in our case is directly in the `src` folder, sometimes it is put in `src/public`.
 
-HTML (Vue.js) files are in the `src` folder. API files are in the `api` folder.
+HTML (Vue.js) files, including the index.html are in the `src` folder. API files are in the `api` folder.
+
 
 
 ## Answers to questions in the task
